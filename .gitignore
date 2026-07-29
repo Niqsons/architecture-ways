@@ -1,0 +1,6 @@
+# Локальные настройки Claude Code (разрешения конкретной машины)
+.claude/settings.local.json
+
+# Windows
+Thumbs.db
+desktop.ini
