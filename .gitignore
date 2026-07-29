@@ -1,6 +1,29 @@
 # Локальные настройки Claude Code (разрешения конкретной машины)
 .claude/settings.local.json
 
+# Конфиденциальные материалы — не должны попасть в публичный репозиторий.
+# Дублирует .aiignore; там — про передачу ИИ, здесь — про публикацию.
+private/
+confidential/
+internal/
+secrets/
+dumps/
+
+# Учётные данные и ключи
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+.env
+.env.*
+credentials.*
+*_rsa
+*_ed25519
+*.dump
+*.sql
+
 # Windows
 Thumbs.db
 desktop.ini

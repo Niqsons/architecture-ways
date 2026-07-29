@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "permissions": {
+    "deny": [
+      "Read(./private/**)",
+      "Read(./confidential/**)",
+      "Read(./internal/**)",
+      "Read(./secrets/**)",
+      "Read(./dumps/**)",
+      "Read(**/private/**)",
+      "Read(**/confidential/**)",
+      "Read(**/internal/**)",
+      "Read(**/secrets/**)",
+      "Read(**/dumps/**)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/credentials.*)",
+      "Read(**/*_rsa)",
+      "Read(**/*_ed25519)",
+      "Read(**/*.dump)",
+      "Read(**/*.sql)"
+    ]
+  }
+}
