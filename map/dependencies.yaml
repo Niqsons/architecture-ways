@@ -41,7 +41,7 @@ meta:
   version: 2
   created: 2026-07-29
   source_document: ARCHITECTURE.md
-  source_sha256: b0dfab0a90b378272e1fc77ab96865845fd1923d4d77d58285ba24426cab9e1a
+  source_sha256: eca8bb7a725c9a92033a50703f19e9e248fea305524ab3188c716b6efcdcf5bf
   source_commit: 0a77e6c   # предыдущий; правка 2026-08-03 ещё не закоммичена
   total_techniques: 56
   techniques_by_group: {1: 5, 2: 8, 3: 7, 4: 8, 5: 7, 6: 7, 7: 4, 8: 4, 9: 6}
@@ -801,11 +801,11 @@ edges:
   # --- Явные из §10 «Чего не брать» ---
 
   - from: "1.1"
-    to: "anti:сопоставление по заголовку"
+    to: "anti:сопоставление по имени, а не по идентификатору"
     type: supersedes
     modality: explicit
     anchor: "§10"
-    quote: "Переименование молча создаёт дубль. См. §1.1"
+    quote: "Переименование приходится объявлять вручную, иначе слияние падает. См. §1.1"
 
   - from: "4.1"
     to: "anti:голосование на локализации"
