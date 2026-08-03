@@ -24,7 +24,7 @@
 # ИСТОЧНИК ПРОЕКТА (добавлено 2026-08-03). Буквенные коды GB/SD/OS убраны
 # из каталога: разобранных проектов становится больше, и трёхбуквенная
 # пометка перестаёт читаться раньше, чем перестаёт помещаться. В каталоге
-# осталось Other / SELF / ПРАКТ, а конкретный проект живёт здесь —
+# осталось Other / SELF / PRACT, а конкретный проект живёт здесь —
 # поле source_projects. Машиночитаемо и рядом со связями.
 #
 # Версия карты: v2 (2026-08-03), правка 2026-08-01 — добавлен приём 3.7
@@ -41,7 +41,7 @@ meta:
   version: 2
   created: 2026-07-29
   source_document: ARCHITECTURE.md
-  source_sha256: 9987b07337daba7a246b8517aa25e432e0603dbf7cb97bf866416e45e2a51ce1
+  source_sha256: b0dfab0a90b378272e1fc77ab96865845fd1923d4d77d58285ba24426cab9e1a
   source_commit: 0a77e6c   # предыдущий; правка 2026-08-03 ещё не закоммичена
   total_techniques: 56
   techniques_by_group: {1: 5, 2: 8, 3: 7, 4: 8, 5: 7, 6: 7, 7: 4, 8: 4, 9: 6}
@@ -106,7 +106,7 @@ techniques:
     source: Other
     source_projects: [StrictDoc]
     verdict: кандидат
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     cost: генератор + один линтер
     has_observed_failure: false
     failure_note: >
@@ -115,7 +115,7 @@ techniques:
 
   "1.2":
     title: Провенанс на хеше содержимого, а не на позиции
-    source: ПРАКТ
+    source: PRACT
     verdict: берём
     scope: [общее]
     cost: нормализация содержимого перед хешированием
@@ -134,17 +134,17 @@ techniques:
 
   "1.4":
     title: Стабильные якоря заголовков вместо автослагов
-    source: Other/ПРАКТ
+    source: Other/PRACT
     source_projects: [StrictDoc]
     verdict: кандидат
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     has_observed_failure: false
 
   "1.5":
     title: Список старых адресов у страницы
-    source: ПРАКТ
+    source: PRACT
     verdict: позже
-    scope: [docs.sbt, постановки]
+    scope: [documentation, постановки]
     has_observed_failure: false
 
   # === Группа 2. Разделение труда ===
@@ -177,7 +177,7 @@ techniques:
 
   "2.4":
     title: Структурный вывод под грамматику
-    source: ПРАКТ
+    source: PRACT
     verdict: берём
     scope: [общее]
     precondition: поддержка GBNF/XGrammar/Outlines в рантайме
@@ -192,7 +192,7 @@ techniques:
 
   "2.6":
     title: Контекст собирается скриптом, не моделью
-    source: ПРАКТ
+    source: PRACT
     verdict: берём
     scope: [общее]
     has_observed_failure: false
@@ -225,7 +225,7 @@ techniques:
     source: Other
     source_projects: [OpenSpec]
     verdict: кандидат
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     has_observed_failure: false
 
   "3.2":
@@ -233,14 +233,14 @@ techniques:
     source: Other
     source_projects: [OpenSpec]
     verdict: берём
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     has_observed_failure: false
 
   "3.3":
     title: Миграция-по-касанию
     source: SELF
     verdict: кандидат
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     has_observed_failure: false
 
   "3.4":
@@ -248,7 +248,7 @@ techniques:
     source: Other, от противного
     source_projects: [OpenSpec]
     verdict: позже
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     has_observed_failure: false
 
   "3.5":
@@ -304,7 +304,7 @@ techniques:
     title: Обратный индекс как сеть полноты
     source: SELF + доработка
     verdict: берём
-    scope: [docs.sbt]
+    scope: [documentation]
     has_observed_failure: false
     key_claim: >
       Переводит локализацию из задачи на полноту в задачу на точность.
@@ -356,7 +356,7 @@ techniques:
     title: Пробел как штатный выход порождения
     source: SELF, расширение 4.5
     verdict: берём
-    scope: [постановки, docs.sbt]
+    scope: [постановки, documentation]
     metric: доля пробелов, закрытых человеком; время их жизни
     has_observed_failure: false
     key_claim: >
@@ -394,7 +394,7 @@ techniques:
     title: Расщепление зелёного
     source: доработка SELF
     verdict: кандидат
-    scope: [docs.sbt]
+    scope: [documentation]
     has_observed_failure: false
     key_claim: >
       Единственная правка, от которой прямо зависит экономический
@@ -405,7 +405,7 @@ techniques:
     title: Компаньон как вид, а не отдельный документ
     source: SELF
     verdict: кандидат
-    scope: [docs.sbt]
+    scope: [documentation]
     has_observed_failure: false
 
   "5.4":
@@ -426,7 +426,7 @@ techniques:
 
   "5.6":
     title: Провенанс правки включает версию модели
-    source: ПРАКТ
+    source: PRACT
     verdict: берём
     scope: [общее]
     has_observed_failure: false
@@ -463,7 +463,7 @@ techniques:
 
   "6.3":
     title: Голосование только на перечислимом выборе
-    source: ПРАКТ, уточнение SELF
+    source: PRACT, уточнение SELF
     verdict: осторожно
     scope: [общее]
     cost: трёх-пятикратная
@@ -488,14 +488,14 @@ techniques:
 
   "6.6":
     title: Фиксация недетерминизма
-    source: ПРАКТ
+    source: PRACT
     verdict: берём
     scope: [общее]
     has_observed_failure: false
 
   "6.7":
     title: Чекер растёт из инцидентов, промпт — нет
-    source: SELF/ПРАКТ
+    source: SELF/PRACT
     verdict: берём
     scope: [общее]
     has_observed_failure: true
@@ -531,7 +531,7 @@ techniques:
 
   "7.3":
     title: Свежий контекст на воркера
-    source: SELF/ПРАКТ
+    source: SELF/PRACT
     verdict: берём
     scope: [общее]
     has_observed_failure: false
@@ -584,7 +584,7 @@ techniques:
     title: Захват человеческих правок
     source: не указан   # пробел провенанса, не SELF и не Other
     verdict: кандидат
-    scope: [docs.sbt]
+    scope: [documentation]
     has_observed_failure: false
 
   "9.2":
@@ -606,14 +606,14 @@ techniques:
     title: Метрика пропусков рядом с метрикой скорости
     source: не указан   # пробел провенанса, не SELF и не Other
     verdict: кандидат
-    scope: [docs.sbt]
+    scope: [documentation]
     has_observed_failure: false
 
   "9.5":
     title: Доля зелёного, изменённого человеком
     source: не указан   # пробел провенанса, не SELF и не Other
     verdict: кандидат
-    scope: [docs.sbt]
+    scope: [documentation]
     has_observed_failure: false
 
   "9.6":
@@ -732,7 +732,7 @@ edges:
     modality: explicit
     anchor: "§6.3"
     quote: >
-      Порождение текста и, главное, локализация в docs.sbt — там нужна
+      Порождение текста и, главное, локализация в documentation — там нужна
       полнота, а её даёт индекс (§4.1), не голосование.
 
   - from: "6.7"
@@ -872,7 +872,7 @@ edges:
     modality: derived
     rationale: >
       Расщепление — частный случай градации уверенности на машинных
-      сигналах. 5.1 задаёт принцип, 5.2 применяет его к docs.sbt.
+      сигналах. 5.1 задаёт принцип, 5.2 применяет его к documentation.
     confidence: высокая
 
   - from: "4.4"
@@ -1171,7 +1171,7 @@ open_questions:
   - id: OQ-1
     question: >
       Приёмы 9.1, 9.2, 9.4, 9.5 не имеют пометки источника
-      (GB/SD/OS/ВАШ/ПРАКТ) в каталоге. Это упущение или они
+      (GB/SD/OS/ВАШ/PRACT) в каталоге. Это упущение или они
       считаются общей практикой?
     blocks: [артефакты кластера evaluation]
     severity: низкая
