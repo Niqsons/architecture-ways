@@ -41,7 +41,7 @@ meta:
   version: 2
   created: 2026-07-29
   source_document: ARCHITECTURE.md
-  source_sha256: b6ecab0ae22aaec4f1dcd1805ba9d4dbdc80e3dcebd5c45be44e72cb3f930c98
+  source_sha256: 9987b07337daba7a246b8517aa25e432e0603dbf7cb97bf866416e45e2a51ce1
   source_commit: 0a77e6c   # предыдущий; правка 2026-08-03 ещё не закоммичена
   total_techniques: 56
   techniques_by_group: {1: 5, 2: 8, 3: 7, 4: 8, 5: 7, 6: 7, 7: 4, 8: 4, 9: 6}
@@ -61,22 +61,29 @@ meta:
     "6.6": seed даёт побайтовую воспроизводимость при неизменном входе
     "6.7": проверка усадки поймала потерю 53% текста, ноль ложных срабатываний
     "7.1": конспект защищает не только контекст, но и 4.8
-  # ОЦЕНКИ. С 2026-08-03 введена пятая градация — `кандидат`: идея из
-  # чужого проекта или из общих соображений, у себя не применявшаяся.
-  #
-  # ПЕРЕОЦЕНКА НЕ ПРОВЕДЕНА, и это надо знать при чтении. Каталог
-  # собирался оптимистично: 53 приёма из 56 стоят с оценкой «берём»,
-  # выставленной по убедительности, а не по применению. Пока переоценка
-  # не сделана, «берём» означает «выглядит применимым».
-  #
-  # Подтверждение применением есть только у тех, кто перечислен ниже
-  # в verified_on_bench, и у тех, где has_observed_failure: true.
-  # Их одиннадцать, а не пятьдесят три.
-  verdicts_reviewed: false
-  verdicts_review_note: >
-    Переоценка выводится из артефактов, а не из памяти: приём считается
-    применённым, если на него указывает работающий скрипт, прогон или
-    разобранный инцидент. Иначе — кандидат.
+  # ОЦЕНКИ. Пятая градация `кандидат` введена 2026-08-03, тогда же
+  # проведена переоценка: было 53 «берём», стало 35, восемнадцать
+  # переведены в кандидаты.
+  verdicts_reviewed: 2026-08-03
+  verdicts_review_method: >
+    Приём засчитан применённым, если есть И СКРИПТ, И СЛЕД ЕГО РАБОТЫ —
+    файл результата, отчёт или тест. «В коде есть функция» не
+    засчитывается: src_hash сперва выглядел мёртвым кодом (грепнут не
+    тот каталог) и оказался рабочим, а класс якоря по частоте описан
+    в каталоге, но в реализации решён иначе — таблицей видов.
+  verdicts_review_result:
+    берём: 35
+    кандидат: 18
+    позже: 2
+    осторожно: 1
+  # Приёмы, где применение частичное. Оценка «берём» оставлена, потому
+  # что механизм работает и оставил артефакт, но половина замысла
+  # не реализована. Полный список — чтобы это не читалось как полное
+  # применение.
+  partially_applied:
+    "4.1": индекс построен и кормит граф; полнотная функция — «правка тянет все места» — не применялась
+    "4.4": считаются два состояния из трёх; «сломана» требует предыдущего прогона и явно отложена в A4-graph.py
+    "9.6": доля unknown считается и печатается в 03-anchors.md; пропусков, найденных судьёй, нет — судьи нет
 
   # Счётчик держался вручную и отстал: стояло 19/25 при фактических 21/26.
   # Расхождение обнаружено 2026-08-03 при добавлении рёбер 5.2 → 4.1 и 4.6.
@@ -98,7 +105,7 @@ techniques:
     title: Машинный идентификатор отдельно от человеческого
     source: Other
     source_projects: [StrictDoc]
-    verdict: берём
+    verdict: кандидат
     scope: [постановки, docs.sbt]
     cost: генератор + один линтер
     has_observed_failure: false
@@ -129,7 +136,7 @@ techniques:
     title: Стабильные якоря заголовков вместо автослагов
     source: Other/ПРАКТ
     source_projects: [StrictDoc]
-    verdict: берём
+    verdict: кандидат
     scope: [постановки, docs.sbt]
     has_observed_failure: false
 
@@ -161,7 +168,7 @@ techniques:
   "2.3":
     title: Модель не видит источник
     source: SELF
-    verdict: берём
+    verdict: кандидат
     scope: [код, постановки]
     has_observed_failure: false
     open_question: >
@@ -217,7 +224,7 @@ techniques:
     title: Дельты вместо переписывания
     source: Other
     source_projects: [OpenSpec]
-    verdict: берём
+    verdict: кандидат
     scope: [постановки, docs.sbt]
     has_observed_failure: false
 
@@ -232,7 +239,7 @@ techniques:
   "3.3":
     title: Миграция-по-касанию
     source: SELF
-    verdict: берём
+    verdict: кандидат
     scope: [постановки, docs.sbt]
     has_observed_failure: false
 
@@ -316,7 +323,7 @@ techniques:
     title: Матрица покрытия как самостоятельный артефакт
     source: Other
     source_projects: [StrictDoc]
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
 
@@ -341,7 +348,7 @@ techniques:
     title: Явный отчёт о пробелах в ответе
     source: Other
     source_projects: [GBrain]
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
 
@@ -379,14 +386,14 @@ techniques:
   "5.1":
     title: Уверенность на машинных сигналах
     source: SELF
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
 
   "5.2":
     title: Расщепление зелёного
     source: доработка SELF
-    verdict: берём
+    verdict: кандидат
     scope: [docs.sbt]
     has_observed_failure: false
     key_claim: >
@@ -397,7 +404,7 @@ techniques:
   "5.3":
     title: Компаньон как вид, а не отдельный документ
     source: SELF
-    verdict: берём
+    verdict: кандидат
     scope: [docs.sbt]
     has_observed_failure: false
 
@@ -465,14 +472,14 @@ techniques:
   "6.4":
     title: Модель-судья как выборочный контролёр, не как гейт
     source: доработка SELF
-    verdict: берём
+    verdict: кандидат
     scope: [код, постановки]
     has_observed_failure: false
 
   "6.5":
     title: Две модели под разные задачи
     source: SELF
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
     caveat: >
@@ -543,7 +550,7 @@ techniques:
     title: Гибридный поиск со слиянием рангов
     source: Other
     source_projects: [GBrain]
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
 
@@ -559,7 +566,7 @@ techniques:
     title: Метаданные как фильтр до поиска
     source: Other
     source_projects: [GBrain]
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
 
@@ -576,14 +583,14 @@ techniques:
   "9.1":
     title: Захват человеческих правок
     source: не указан   # пробел провенанса, не SELF и не Other
-    verdict: берём
+    verdict: кандидат
     scope: [docs.sbt]
     has_observed_failure: false
 
   "9.2":
     title: Вопросы аналитиков как бесплатная разметка
     source: не указан   # пробел провенанса, не SELF и не Other
-    verdict: берём
+    verdict: кандидат
     scope: [общее]
     has_observed_failure: false
 
@@ -598,14 +605,14 @@ techniques:
   "9.4":
     title: Метрика пропусков рядом с метрикой скорости
     source: не указан   # пробел провенанса, не SELF и не Other
-    verdict: берём
+    verdict: кандидат
     scope: [docs.sbt]
     has_observed_failure: false
 
   "9.5":
     title: Доля зелёного, изменённого человеком
     source: не указан   # пробел провенанса, не SELF и не Other
-    verdict: берём
+    verdict: кандидат
     scope: [docs.sbt]
     has_observed_failure: false
 
