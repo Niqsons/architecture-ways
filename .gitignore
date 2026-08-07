@@ -50,3 +50,6 @@ credentials.*
 # Windows
 Thumbs.db
 desktop.ini
+
+# Отложенные версии и артефакты прогонов — живут в X:\_archive, вне репозиториев
+_archive/
