@@ -18,8 +18,12 @@
 
 Запуск:
     python tools/check_names.py            # staged-файлы (для hook)
+    python tools/check_names.py ФАЙЛ...    # явные файлы, до коммита
     python tools/check_names.py --all      # всё, что под git
     python tools/check_names.py --history  # каждый блоб всей истории
+
+Незнакомый аргумент — ошибка, а не молчаливый staged-режим: гейт,
+проглотивший аргумент, отвечает не на тот вопрос, который ему задали.
 """
 import os
 import re
@@ -185,17 +189,46 @@ def files_to_check(repo, mode):
 
 
 def main():
+    # argparse, а не разбор sys.argv руками. Прежняя редакция глотала
+    # незнакомые аргументы молча: `check_names.py <файл>` и даже
+    # `--help` давали «[ok] чисто (staged)» — аргумент игнорировался,
+    # проверялся пустой индекс. Пустая проверка, отрапортовавшая
+    # «чисто», опаснее отсутствующей — предупреждение из шапки этого
+    # же файла, которое он сам и нарушал. Найдено сквозным прогоном:
+    # первая форма ушла в облако с такой «проверкой».
+    import argparse
+    ap = argparse.ArgumentParser(
+        description="Гейт: продуктовые имена, адреса и секреты "
+                    "не уезжают в git")
+    ap.add_argument("files", nargs="*",
+                    help="проверить эти файлы (до коммита, вне индекса)")
+    ap.add_argument("--all", action="store_true",
+                    help="всё, что под git")
+    ap.add_argument("--history", action="store_true",
+                    help="каждый блоб всей истории")
+    args = ap.parse_args()
+
     repo = os.getcwd()
-    mode = "staged"
-    if "--all" in sys.argv:
-        mode = "all"
-    if "--history" in sys.argv:
+    if args.history:
         return check_history(repo)
+    if args.files and args.all:
+        ap.error("либо явные файлы, либо --all — не разом")
+
+    mode = "all" if args.all else ("files" if args.files else "staged")
 
     forbidden = load_forbidden()
     hosts = load_hosts()
     bad = warn = 0
-    for rel in files_to_check(repo, mode):
+    if mode == "files":
+        файлы = []
+        for f in args.files:
+            if not os.path.isfile(os.path.join(repo, f)):
+                print(f"[!!] файла нет: {f}")
+                return 2
+            файлы.append(f)
+    else:
+        файлы = files_to_check(repo, mode)
+    for rel in файлы:
         if os.path.splitext(rel)[1].lower() in BINARY_EXT:
             continue
         if any(p in SKIP_DIRS for p in rel.replace("\\", "/").split("/")):
