@@ -138,6 +138,28 @@ RE_SECRET_EXPR = re.compile(
 # исправлена. Пометка видна глазами и грепается.
 GATE_OK = re.compile(r"gate-ok")
 
+# Вторая форма подавления — для генератов. `gate-ok` живёт в строке
+# файла, а генерат (research.md и родня) пишется скриптом заново —
+# пометка исчезает вместе со строкой при первой же пересборке.
+# Подстрока из этого файла действует как gate-ok на любую строку,
+# её содержащую: она привязана к содержимому, а не к файлу, и потому
+# переживает пересборку. Формат — как у allowed-hosts: подстрока,
+# ` # причина`; разрешение без причины не переживает ревизию.
+LINES_FILE = os.path.join("tools", "allowed-lines.txt")
+
+
+def load_allowed_lines():
+    allowed = []
+    if os.path.isfile(LINES_FILE):
+        with open(LINES_FILE, encoding="utf-8") as fh:
+            for raw in fh:
+                if raw.lstrip().startswith("#"):
+                    continue
+                part = raw.split(" #", 1)[0].strip()
+                if part:
+                    allowed.append(part)
+    return allowed
+
 # --- имя в позиции хоста ---------------------------------------------
 #
 # Токен из меток через точку: `zonex-app.internal`, `example.com`,
@@ -243,7 +265,7 @@ def git(repo, *args):
     return r.stdout.decode("utf-8", "replace")
 
 
-def check_text(text, forbidden, hosts=None, zones=()):
+def check_text(text, forbidden, hosts=None, zones=(), allowed=()):
     """Возвращает список (номер строки, класс, что нашлось).
 
     Классы из BLOCKING останавливают коммит, остальные печатаются
@@ -256,7 +278,7 @@ def check_text(text, forbidden, hosts=None, zones=()):
         hosts = HOST_ALLOW
     out = []
     for i, line in enumerate(text.split("\n"), 1):
-        if GATE_OK.search(line):
+        if GATE_OK.search(line) or any(s in line for s in allowed):
             continue
         for rx in forbidden:
             m = rx.search(line)
@@ -348,6 +370,17 @@ def selftest():
     else:
         print("[ok] разрешение хоста снимает находку, без него — находка")
 
+    # Допущенная подстрока — gate-ok, переживающий пересборку генерата.
+    if check_text("app-zonex.internal", [], zones=Z,
+                  allowed=["app-zonex.internal"]):
+        print("[СБОЙ] допущенная строка не подавляет находку")
+        bad += 1
+    elif not check_text("app-zonex.internal", [], zones=Z, allowed=["чужое"]):
+        print("[СБОЙ] несовпавшая подстрока тоже подавила — проверка пустая")
+        bad += 1
+    else:
+        print("[ok] допущенная подстрока подавляет, несовпавшая — нет")
+
     print(f"\n{'[!!] сбоев: ' + str(bad) if bad else '[ok] самопроверка чиста'}")
     return 1 if bad else 0
 
@@ -386,6 +419,7 @@ def main():
 
     forbidden, zones = load_forbidden()
     hosts = load_hosts()
+    allowed = load_allowed_lines()
     bad = warn = 0
     if mode == "files":
         файлы = []
@@ -413,7 +447,7 @@ def main():
         except UnicodeDecodeError:
             continue
         for lineno, kind, what in check_text(text, forbidden, hosts,
-                                             zones):
+                                             zones, allowed):
             mark = "!!" if kind in BLOCKING else "  "
             print(f"[{mark}] {rel}:{lineno}: [{kind}] {what}")
             if kind in BLOCKING:
@@ -426,7 +460,9 @@ def main():
     if bad:
         print(f"\n[!!] находок: {bad}. Коммит остановлен.")
         print("     Обезличить, вынести материал в X:\\_archive,")
-        print("     либо пометить строку `gate-ok`, если это эталон теста.")
+        print("     либо пометить строку `gate-ok`, если это эталон теста;")
+        print("     для строк генератов — подстроку с причиной "
+              "в tools/allowed-lines.txt.")
         return 1
     print(f"[ok] чисто ({mode})")
     return 0
@@ -441,6 +477,7 @@ def check_history(repo):
     """
     forbidden, zones = load_forbidden()
     hosts = load_hosts()
+    allowed = load_allowed_lines()
     names = {}
     for line in git(repo, "rev-list", "--objects", "--all").split("\n"):
         p = line.split(" ", 1)
@@ -471,7 +508,8 @@ def check_history(repo):
         # Только блокирующие классы: абсолютный путь в старом RUN.md
         # не повод объявлять историю грязной, иначе отчёт всегда красный
         # и его перестают читать.
-        hits = [h for h in check_text(text, forbidden, hosts, zones)
+        hits = [h for h in check_text(text, forbidden, hosts, zones,
+                                      allowed)
                 if h[1] in BLOCKING]
         if hits:
             where = names.get(sha, "<блоб без имени>")
